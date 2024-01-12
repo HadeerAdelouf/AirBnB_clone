@@ -12,6 +12,10 @@ from models import storage
 class HBNBCommand(cmd.Cmd):
     """Class for the command interpreter."""
 
+    prompt = "(hbnb) "
+    __classes = {
+        "BaseModel"
+    }
     def do_EOF(self, line):
         """Ctrl+D signal to exit the program"""
         print()
@@ -33,10 +37,10 @@ class HBNBCommand(cmd.Cmd):
         """
         if not arg: 
             print("** class name missing **")
-        elif arg not in storage.classes():
+        elif arg not in storage.__classes():
             print("** class doesn't exist **")
         else:
-            new_inst = storage.classes()[arg]()
+            new_inst = storage.__classes()[arg]()
             new_inst.save()
             print(new_inst.id)
 
