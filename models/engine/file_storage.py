@@ -2,10 +2,10 @@
 """
 Module for FileStorage class 4 serializing and deserializing data
 """
-import datetime
+from datetime import datetime
 import json
 import os
-
+from models.base_model import BaseModel
 
 class FileStorage:
     """
@@ -17,22 +17,12 @@ class FileStorage:
     def all(self):
         """returns the dictionary objects"""
         return FileStorage.__objects
-
+    
     def new(self, obj):
         """sets in __objects the obj with key 
         <obj class name>.id"""
         key = "{}.{}".format(type(obj).__name__, obj.id)
         FileStorage.__objects[key] = obj
-
-    def __classes(self):
-        """Returns a dictionary of valid classes and their references"""
-        from models.base_model import BaseMode
-
-        __classes = {
-        "BaseModel"
-        }
-        return __classes
-        
 
     def save(self):
         """ serializes __objects to the JSON file"""
