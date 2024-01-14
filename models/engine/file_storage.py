@@ -2,9 +2,9 @@
 """
 Module for FileStorage class 4 serializing and deserializing data
 """
+import os
 from datetime import datetime
 import json
-import os
 
 
 class FileStorage:
@@ -45,11 +45,11 @@ class FileStorage:
 
     def save(self):
         """ serializes __objects to the JSON file"""
-        all_objs = FileStorage.__objects
+        store_objs = FileStorage.__objects
         obj_dictionary = {}
 
-        for obj in all_objs.keys():
-            obj_dictionary[obj] = all_objs[obj].to_dict()
+        for obj in store_objs.keys():
+            obj_dictionary[obj] = store_objs[obj].to_dict()
 
         with open(FileStorage.__file_path, "w", encoding="utf-8") as file:
             json.dump(obj_dictionary, file)

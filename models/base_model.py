@@ -1,33 +1,34 @@
 #!/usr/bin/paython3
 """BaseModel class script"""
 from datetime import datetime
-import uuid
+from uuid import uuid4
 from models import storage
-
+import models
 
 class BaseModel:
     """base model class"""
     def __init__(self, *args, **kwargs):
-        """
-        public instances attrs
-
-        Args:
-            *args:list of arguments
-            **kwargs (dict): Key/value pairs of attributes.
-        """
-
-        t_format = "%Y-%m-%dT%H:%M:%S.%f"
+        """ Construct """
         if kwargs:
             for key, value in kwargs.items():
-                if key == 'created_at' or key == 'updated_at':
-                    setattr(self, key, datetime.strptime(value, t_format))
-                else:
-                    setattr(self, key, value)
+                if key == '__class__':
+                    continue
+                elif key == 'updated_at':
+                    value = datetime.strptime(value, "%Y-%m-%dT%H:%M:%S.%f")
+                elif key == 'created_at':
+                    value = datetime.strptime(value, "%Y-%m-%dT%H:%M:%S.%f")
+                if 'id' not in kwargs.keys():
+                    self.id = str(uuid4())
+                if 'created_at' not in kwargs.keys():
+                    self.created_at = datetime.now()
+                if 'updated_at' not in kwargs.keys():
+                    self.updated_at = datetime.now()
+                setattr(self, key, value)
         else:
-            self.id = str(uuid.uuid4())
-            self.created_at = datetime.today()
-            self.updated_at = datetime.today()
-            storage.new(self)
+            self.id = str(uuid4())
+            self.created_at = datetime.now()
+            self.updated_at = self.created_at
+            models.storage.new(self)
 
     def __str__(self):
         """prints readable presentaion"""
