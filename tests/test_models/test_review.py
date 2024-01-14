@@ -80,7 +80,7 @@ class TestReview_to_dict(unittest.TestCase):
 
     def test_contains_added_attributes(self):
         review = Review()
-        review.middle_name = "Johnson"
+        review.middle_name = "hadeer"
         review.my_number = 296
         self.assertEqual("hadeer", review.middle_name)
         self.assertIn("my_number", review.to_dict())

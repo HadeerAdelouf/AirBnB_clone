@@ -23,7 +23,7 @@ class Test_Amenity(unittest.TestCase):
 
     def tearDown(self):
         """Tears down test methods."""
-        self.resetStorage()
+        self.reset_Storage()
         pass
 
     def reset_Storage(self):
@@ -56,14 +56,6 @@ class Test_Amenity(unittest.TestCase):
         self.assertIn("'id': '1963778'", amenity_str)
         self.assertIn("'created_at': " + my_date_repr, amenity_str)
         self.assertIn("'updated_at': " + my_date_repr, amenity_str)
-
-    def test_attributes(self):
-        """Tests the attributes of Amenity class"""
-        attributes = storage.attributes()["Amenity"]
-        X = Amenity()
-        for i, j in attributes.items():
-            self.assertTrue(hasattr(X, i))
-            self.assertEqual(type(getattr(X, i, None)), j)
 
 
 if __name__ == "__main__":

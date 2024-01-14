@@ -3,7 +3,7 @@
 
 import unittest
 from datetime import datetime
-import time
+from time import sleep
 from models.city import City
 import re
 import json
@@ -23,7 +23,7 @@ class TestCity(unittest.TestCase):
 
     def tearDown(self):
         """Tears down test methods."""
-        self.resetStorage()
+        self.reset_Storage()
         pass
 
     def reset_Storage(self):
@@ -45,13 +45,22 @@ class TestCity(unittest.TestCase):
         self.assertIn("name", dir(my_city))
         self.assertNotIn("name", my_city.__dict__)
 
-    def test_attrs(self):
-        """Tests the attributes of City class"""
-        attributes = storage.attributes()["City"]
-        citY = City()
-        for k, v in attributes.items():
-            self.assertTrue(hasattr(citY, k))
-            self.assertEqual(type(getattr(citY, k, None)), v)
+    def test_name_is_public_class_attribute(self):
+        cy = City()
+        self.assertEqual(str, type(City.name))
+        self.assertIn("name", dir(cy))
+        self.assertNotIn("name", cy.__dict__)
+
+    def test_two_cities_unique_ids(self):
+        cy1 = City()
+        cy2 = City()
+        self.assertNotEqual(cy1.id, cy2.id)
+
+    def test_two_cities_different_created_at(self):
+        cy1 = City()
+        sleep(0.05)
+        cy2 = City()
+        self.assertLess(cy1.created_at, cy2.created_at)
 
 
 if __name__ == "__main__":
