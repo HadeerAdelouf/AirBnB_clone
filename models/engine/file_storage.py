@@ -5,7 +5,7 @@ Module for FileStorage class 4 serializing and deserializing data
 from datetime import datetime
 import json
 import os
-from models.base_model import BaseModel
+
 
 class FileStorage:
     """
@@ -14,12 +14,19 @@ class FileStorage:
     __file_path = "file.json"
     __objects = {}
 
+    def classes(self):
+        """Returns a dictionary of valid classes and their references"""
+        from models.base_model import BaseModel
+
+        classes = {"BaseModel": BaseModel}
+        return classes
+
     def all(self):
         """returns the dictionary objects"""
         return FileStorage.__objects
-    
+
     def new(self, obj):
-        """sets in __objects the obj with key 
+        """sets in __objects the obj with key
         <obj class name>.id"""
         key = "{}.{}".format(type(obj).__name__, obj.id)
         FileStorage.__objects[key] = obj
