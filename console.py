@@ -7,6 +7,11 @@ import os
 from models import storage
 from models.base_model import BaseModel
 from models.user import User
+from models.amenity import Amenity
+from models.review import Review
+from models.place import Place
+from models.state import State
+from models.city import City
 
 
 class HBNBCommand(cmd.Cmd):
@@ -93,12 +98,17 @@ class HBNBCommand(cmd.Cmd):
 
     def do_all(self, arg):
         """ Method to print all instances """
-        if len(arg) == 0:
-            print([str(obj) for obj in storage.all().values()])
-        elif arg not in self.classes:
-            print("** class doesn't exist **")
+        if arg != "":
+            argment = arg.split(' ')
+            if argment[0] not in storage.classes():
+                print("** class doesn't exist **")
+            else:
+                List = [str(obj) for key, obj in storage.all().items()
+                      if type(obj).__name__ == argment[0]]
+                print(List)
         else:
-            print([str(obj) for b, obj in storage.all().items() if arg in b])
+            new_list = [str(obj) for key, obj in storage.all().items()]
+            print(new_list)
 
     def do_update(self, arg):
         """ Updates an instance by adding or updating attribute"""
@@ -129,6 +139,20 @@ class HBNBCommand(cmd.Cmd):
             else:
                 print('** no instance found **')
 
+    def do_count(self, arg):
+        """
+        Counts the instances of a class.
+        """
+        linee = arg.split(' ')
+        if not linee[0]:
+            print("** class name missing **")
+        elif linee[0] not in storage.classes():
+            print("** class doesn't exist **")
+        else:
+            elem = [
+                x for x in storage.all() if x.startswith(
+                    linee[0] + '.')]
+            print(len(elem))
 
 if __name__ == '__main__':
     HBNBCommand().cmdloop()
