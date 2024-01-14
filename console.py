@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-""" Holberton AirBnB Console """
+"""Module for the entry point of the command interpreter."""
 import cmd
 import sys
 import json
@@ -15,14 +15,14 @@ from models.review import Review
 
 
 class HBNBCommand(cmd.Cmd):
-    """ General Class for HBNBCommand """
+    """Class for the command interpreter hbnb"""
     prompt = '(hbnb) '
     classes = {'BaseModel': BaseModel, 'User': User, 'City': City,
                'Place': Place, 'Amenity': Amenity, 'Review': Review,
                'State': State}
 
     def do_quit(self, arg):
-        """ Exit method for quit typing """
+        """ Exits the program. """
         exit()
 
     def do_EOF(self, arg):
@@ -39,19 +39,21 @@ class HBNBCommand(cmd.Cmd):
         if len(arg) == 0:
             print('** class name missing **')
             return
-        new = None
+        new_inst = None
         if arg:
             arg_list = arg.split()
             if len(arg_list) == 1:
                 if arg in self.classes.keys():
-                    new = self.classes[arg]()
-                    new.save()
-                    print(new.id)
+                    new_inst = self.classes[arg]()
+                    new_inst.save()
+                    print(new_inst.id)
                 else:
                     print("** class doesn't exist **")
 
     def do_show(self, arg):
-        """ Method to print instance """
+        """
+        Prints the string representation of an instance.
+        """
         if len(arg) == 0:
             print('** class name missing **')
             return
@@ -73,17 +75,17 @@ class HBNBCommand(cmd.Cmd):
         if len(arg) == 0:
             print("** class name missing **")
             return
-        arg_list = arg.split()
+        argss = arg.split()
         try:
-            obj = eval(arg_list[0])
+            obj = eval(argss[0])
         except Exception:
             print("** class doesn't exist **")
             return
-        if len(arg_list) == 1:
+        if len(argss) == 1:
             print('** instance id missing **')
             return
-        if len(arg_list) > 1:
-            key = arg_list[0] + '.' + arg_list[1]
+        if len(argss) > 1:
+            key = argss[0] + '.' + argss[1]
             if key in storage.all():
                 storage.all().pop(key)
                 storage.save()
@@ -92,13 +94,13 @@ class HBNBCommand(cmd.Cmd):
                 return
 
     def do_all(self, arg):
-        """ Method to print all instances """
+        """ print all instances """
         if len(arg) == 0:
-            print([str(a) for a in storage.all().values()])
+            print([str(obj) for obj in storage.all().values()])
         elif arg not in self.classes:
             print("** class doesn't exist **")
         else:
-            print([str(a) for b, a in storage.all().items() if arg in b])
+            print([str(obj) for i, obj in storage.all().items() if arg in i])
 
     def do_update(self, arg):
         """ Method to update JSON file"""

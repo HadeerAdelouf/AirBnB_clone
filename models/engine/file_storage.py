@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-""" class FileStorage
+""" Module for FileStorage class
     serializes instances to a JSON file
     and deserializes JSON file to instances """
 import json
@@ -30,16 +30,16 @@ class FileStorage:
 
     def save(self):
         """ serializes objectss to the JSON file (path: __file_path) """
-        with open(FileStorage.__file_path, 'w', encoding='utf-8') as fname:
+        with open(FileStorage.__file_path, 'w', encoding='utf-8') as filename:
             new_dict = {key: obj.to_dict() for key, obj in
                         FileStorage.__objects.items()}
-            json.dump(new_dict, fname)
+            json.dump(new_dict, filename)
 
     def reload(self):
         """ Reload the file """
         if (os.path.isfile(FileStorage.__file_path)):
             with open(FileStorage.__file_path, 'r', encoding="utf-8") as fname:
-                l_json = json.load(fname)
-                for key, val in l_json.items():
+                obj_json = json.load(fname)
+                for key, val in obj_json.items():
                     FileStorage.__objects[key] = eval(
                         val['__class__'])(**val)
