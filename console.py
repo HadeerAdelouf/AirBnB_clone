@@ -3,7 +3,8 @@
 import cmd
 import sys
 import json
-import os
+import re
+import shlex
 from models import storage
 from models.base_model import BaseModel
 from models.user import User
@@ -97,62 +98,80 @@ class HBNBCommand(cmd.Cmd):
                 return
 
     def do_all(self, arg):
-        """ Method to print all instances """
+        """
+        Print the string representation of all instances or a specific class.
+        """
         if arg != "":
-            argment = arg.split(' ')
-            if argment[0] not in storage.classes():
+            argss = arg.split(' ')
+            if argss[0] not in storage.classes():
                 print("** class doesn't exist **")
             else:
-                List = [str(obj) for key, obj in storage.all().items()
-                      if type(obj).__name__ == argment[0]]
-                print(List)
+                nl = [str(obj) for key, obj in storage.all().items()
+                      if type(obj).__name__ == argss[0]]
+                print(nl)
         else:
-            new_list = [str(obj) for key, obj in storage.all().items()]
-            print(new_list)
+            new_obj = [str(obj) for key, obj in storage.all().items()]
+            print(new_obj)
 
     def do_update(self, arg):
-        """ Updates an instance by adding or updating attribute"""
-        arg = arg.split()
-        if len(arg) == 0:
-            print('** class name missing **')
+        """Updates an instance by adding or updating attribute.
+        """
+        if arg == "" or arg is None:
+            print("** class name missing **")
             return
-        elif arg[0] not in self.classes:
+
+        regex = r'^(\S+)(?:\s(\S+)(?:\s(\S+)(?:\s((?:"[^"]*")|(?:(\S)+)))?)?)?'
+        match = re.search(regex, arg)
+        classname, uid, attribute, value = match.groups()
+        if not match:
+            print("** class name missing **")
+        elif classname not in storage.classes():
             print("** class doesn't exist **")
-            return
-        elif len(arg) == 1:
-            print('** instance id missing **')
-            return
+        elif uid is None:
+            print("** instance id missing **")
         else:
-            key = arg[0] + '.' + arg[1]
-            if key in storage.all():
-                if len(arg) > 2:
-                    if len(arg) == 3:
-                        print('** value missing **')
-                    else:
-                        setattr(
-                            storage.all()[key],
-                            arg[2],
-                            arg[3][1:-1])
-                        storage.all()[key].save()
-                else:
-                    print('** attribute name missing **')
+            key = "{}.{}".format(classname, uid)
+            if key not in storage.all():
+                print("** no instance found **")
+            elif not attribute:
+                print("** attribute name missing **")
+            elif not value:
+                print("** value missing **")
             else:
-                print('** no instance found **')
+                cast = None
+                if not re.search('^".*"$', value):
+                    if '.' in value:
+                        cast = float
+                    else:
+                        cast = int
+                else:
+                    value = value.replace('"', '')
+                attr = storage.attributes()[classname]
+                if attribute in attr:
+                    value = attr[attribute](value)
+                elif cast:
+                    try:
+                        value = cast(value)
+                    except ValueError:
+                        pass
+                setattr(storage.all()[key], attribute, value)
+                storage.all()[key].save()
 
     def do_count(self, arg):
         """
-        Counts the instances of a class.
+        Counts the instances
         """
-        linee = arg.split(' ')
-        if not linee[0]:
+        arr = arg.split(' ')
+        if not arr[0]:
             print("** class name missing **")
-        elif linee[0] not in storage.classes():
+        elif arr[0] not in storage.classes():
             print("** class doesn't exist **")
         else:
-            elem = [
+            dis = [
                 x for x in storage.all() if x.startswith(
-                    linee[0] + '.')]
-            print(len(elem))
+                    arr[0] + '.')]
+            print(len(dis))
+
 
 if __name__ == '__main__':
     HBNBCommand().cmdloop()
